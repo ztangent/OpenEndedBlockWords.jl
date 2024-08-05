@@ -2,6 +2,8 @@
 
 An implementation of open-ended goal inference via open-ended Sequential Inverse Plan Search (SIPS) in the Block Words domain.
 
+![Illustration of open-ended SIPS in the Block Words domain.](assets/example.png)
+
 For more details about open-ended SIPS, see [our paper](https://arxiv.org/abs/2407.16770):
 
 > Tan Zhi-Xuan, Gloria Kang, Vikash Mansinghka, and Joshua B. Tenenbaum, 2024. **Infinite Ends from Finite Samples: Open-Ended Goal Inference as Top-Down Bayesian Filtering of Bottom-Up Proposals** In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (CogSci 2024).
