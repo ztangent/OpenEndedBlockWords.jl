@@ -1,0 +1,403 @@
+<!doctype html>
+<html ng-app="experimentApp">
+
+<head>
+  <title>Block Words</title>
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    body {
+      background-color: #FFFFFF;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .main {
+      width: 80%;
+      margin: auto;
+      padding-top: 50px;
+      font-size: 11pt;
+    }
+
+    .w3-col {
+      padding-left: 20px;
+    }
+
+    .full-row {
+      width: 200%;
+      padding: 10vh 7.5vw 2vh 0vw;
+      font-size: 15pt;
+      font-weight: 400;
+      text-align: justify;
+    }
+
+    .full-row strong {
+      font-weight: 700;
+    }
+
+    .feedback-full-row {
+      width: 200%;
+      padding: 10pt 0pt;
+      font-size: 14pt;
+      font-weight: 400;
+      text-align: justify;
+    }
+
+    .feedback-full-row strong {
+      font-weight: 700;
+    }
+
+    .captions {
+      font-size: 12pt;
+      font-weight: 400;
+      text-align: left;
+    }
+
+    .captions strong {
+      font-weight: 700;
+    }
+
+    .stimulus {
+      float: right;
+      width: 80%;
+    }
+
+    ul.no-bullets {
+      list-style-type: none;
+    }
+
+    ul.no-bullets-full-row {
+      width: 200%;
+      list-style-type: none;
+    }
+
+    ul.guesses {
+      list-style-type: none;
+      line-height: 1.5;
+      margin-block-start: 0.5em;
+      margin-block-end: 0.5em;
+      padding-inline-start: 20px;
+    }
+
+    ul.points-breakdown {
+      list-style-type: none;
+      line-height: 1.5;
+      margin-block-start: 0.5em;
+      margin-block-end: 0.5em;
+      padding-inline-start: 20px;
+      font-size: 11pt;
+      color: #555555;
+    }
+
+    input[type=checkbox],
+    input[type=radio] {
+      /* Double-sized Checkboxes */
+      -ms-transform: scale(2);
+      /* IE */
+      -moz-transform: scale(2);
+      /* FF */
+      -webkit-transform: scale(2);
+      /* Safari and Chrome */
+      -o-transform: scale(2);
+      /* Opera */
+      transform: scale(2);
+      /* padding: 20px; */
+      margin: 10px;
+    }
+
+    .input-warning {
+      color: #cc0000;
+      font-size: 14px;
+    }
+
+    .checkboxtext {
+      /* Checkbox text */
+      font-size: 120%;
+      display: inline;
+    }
+
+    .controls {
+      float: right;
+      padding: 10px;
+      clear: both;
+    }
+
+    .comprehension_question {
+      float: left;
+      padding: 10px;
+    }
+
+    .section_title {
+      float: left;
+      padding-top: 10px;
+      font-family: "Lato";
+      font-size: 16pt;
+      font-weight: 700;
+    }
+
+    .button {
+      background-color: #02a342;
+      border-radius: 6px;
+      border: 1px solid #02a342;
+      display: inline-block;
+      cursor: pointer;
+      color: #ffffff;
+      font-family: "Lato";
+      font-size: 14px;
+      padding: 4px 10px;
+      text-decoration: none;
+      text-shadow: 0px 1px 0px black;
+      margin-right: 10px;
+    }
+
+    .button:hover {
+      background-color: #2cb04f;
+    }
+
+    .button:disabled {
+      background-color: #aaaaaa;
+      border: 1px solid #ffffff;
+    }
+
+    .button:active {
+      position: relative;
+      top: 1px;
+    }
+
+    .remove-button {
+      background-color: transparent;
+      border: none;
+      display: inline-block;
+      cursor: pointer;
+      color: #666666;
+      font-family: "Lato";
+      font-size: 14px;
+      padding: 2px;
+    }
+
+    .remove-button:hover {
+      color: #cc0000;
+    }
+
+    .remove-button:active {
+      position: relative;
+      top: 1px;
+    }
+
+    .remove-button:disabled {
+      color: #999999;
+    }
+  </style>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- <script src="/__/firebase/8.1.1/firebase-app.js"></script> -->
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>  
+    // const firebaseConfig = {
+    //   // FILL IN YOUR FIREBASE CONFIG HERE
+    // };
+  
+    // // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig);
+
+    // // Get a reference to the database service
+    // const root = firebase.database().ref();
+    // const resultsRef = root.child("results");
+    // const counterRef = root.child("counter");
+    // const counterKey = "count";
+  </script>
+  
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-sanitize.js"></script>
+
+  <!-- Experiment App -->
+  <script src="lib/preloader.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body ng-controller="ExperimentController" ng-init="set_stimuli()">
+  <div class="main w3-row">
+    <!-- Left Side -->
+    <div class="w3-col m6">
+      <!-- Instructions -->
+      <p ng-show="section == 'instructions' && instruction_has_text() && !instruction_has_image()" class="full-row"
+        ng-bind-html="instructions[inst_id].text">
+      </p>
+
+      <!-- Exam Questions-->
+      <ul class="no-bullets-full-row" ng-show="is_exam()" ng-cloak>
+        <li ng-repeat="opt in instructions[inst_id].options">
+          <input type="radio" name="exam" ng-model="exam_response" ng-click="validate_exam(opt)" ng-disabled="is_feedback()" value="{{opt}}">
+          <span class="checkboxtext" ng-bind-html="opt"></span>
+        </li>
+      </ul>
+      <ul class="no-bullets-full-row" ng-show="is_feedback()" ng-cloak>
+        <li ng-repeat="opt in instructions[inst_id].options">
+          <input type="radio" name="exam" ng-model="last_exam_response" ng-disabled="true" value="{{opt}}">
+          <span class="checkboxtext" ng-bind-html="opt"></span>
+        </li>
+      </ul>
+
+      <!-- Exam Feedback -->
+      <p ng-show="is_feedback()" class="feedback-full-row" ng-cloak>
+        <strong ng-show="last_exam_correct == true" style="color:green">Correct. </strong>
+        <strong ng-show="last_exam_correct == false" style="color:red">Incorrect. </strong>
+        The answer is: <strong ng-bind-html="instructions[inst_id].options[instructions[inst_id].answer]"></strong>
+      </p>
+      <p ng-show="is_exam()" class="feedback-full-row"><br></p>
+
+      <!-- Exam Endscreen -->
+      <div ng-show="is_exam_end()" class="full-row" ng-cloak>
+        <span ng-show="exam_score == exam_results.length">
+          Great job, you answered <strong style="color:green">{{exam_score}}/{{exam_results.length}}</strong> questions correctly!<br>
+          <br>
+          Press <strong>Next</strong> to continue.
+        </span>
+        <span ng-show="exam_score < exam_results.length">
+          You answered <strong style="color:red">{{exam_score}}/{{exam_results.length}}</strong> questions correctly.<br>
+          <br>
+          Press <strong>Next</strong> to retake the quiz, and try to answer all questions correctly.
+        </span>
+        <br><br>
+      </div>
+
+      <!-- Instruction Image -->
+      <img ng-show="section == 'instructions' && instruction_has_image()" ng-src="{{instructions[inst_id].image}}"
+        class="stimulus" id="instruction-img">
+      <p class="section_title" ng-show="section == 'instructions' && instruction_has_image()">Tutorial</p>
+
+      <!-- Stimuli -->
+      <img ng-show="section == 'stimuli'" ng-src="{{cur_stim_image()}}"
+        class="stimulus" id="stimulus-img" ng-cloak>
+      <div class="section_title" ng-show="section == 'stimuli' && part_id >= 0" ng-cloak>
+        Round {{stim_id+1}}/{{stimuli_set.length}}</div>
+      <div class="section_title" ng-show="section == 'stimuli' && part_id < 0" ng-cloak>
+        Round {{stim_id}}/{{stimuli_set.length}}</div>
+
+      <!-- Endscreen -->
+      <p ng-show="section == 'endscreen'" class="full-row">
+        You're all done! You scored {{total_reward}} points in total.
+        <br><br>
+        Thank you for your time :)
+        <br><br>
+        Your survey code is <strong>{{user_id}}</strong>
+      </p>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="button" ng-click="replay_all()"
+          ng-show="section == 'stimuli' && part_id >= 0" ng-disabled="part_id <= 0">
+          Replay All ⟲
+        </button>
+        <button class="button" ng-click="reload_gif()"
+          ng-show="section == 'stimuli' && part_id >= 0" ng-disabled="part_id <= 0">
+          Replay ↶
+        </button>
+        <button class="button" ng-click="reload_gif()" ng-show="section == 'instructions' && instruction_has_image()">
+          Replay ↶
+        </button>
+        <button class="button" ng-click="advance()" ng-show="section == 'stimuli' && part_id < 1">
+          Next&ensp;▶
+        </button>
+        <button class="button" ng-click="advance()" ng-hide="section == 'stimuli' && part_id < 1"
+          ng-disabled="section == 'endscreen' ||
+            ((valid_response == false || anim_complete == false) && (section == 'stimuli' && part_id >= 1 || is_tutorial()) && !hide_questions())  ||
+            (valid_exam == false && section == 'instructions' && is_exam()) ||
+            (valid_comprehension == false && section == 'instructions' && instruction_has_question())">
+          Next&ensp;▶
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="w3-col m5" ng-show="show_rhs">
+
+      <!-- Captioned Instructions -->
+      <p ng-show="section == 'instructions' && instruction_has_image()" class="captions"
+        ng-bind-html="instructions[inst_id].text" ng-cloak>
+      </p>
+
+      <!-- Scenario Start -->
+      <div ng-show="(section == 'stimuli' && part_id == 0)" class="captions">
+        <p>Please take a moment to look over this scenario.<br><br>
+           Press <strong>Next</strong> to continue.
+        </p>
+      </div>
+
+      <!-- Goal Questions -->
+      <div ng-show="(section == 'stimuli' && part_id >= 1) || (is_tutorial() && !hide_questions())" class="captions"
+        id="question" ng-cloak>
+        <p><strong>What word do you think is being spelled? </strong> </p>
+        <p>
+          Enter <i>one or more words</i> (3—8 letters long) to continue. <br>
+          <i>Remove</i> any guesses that you think are unlikely.
+        </p>
+        
+        <input type="text" id="guess-input" ng-model="cur_guess" ng-change="validate_guess()"
+          ng-keypress="($event.which === 13) && valid_guess && submit_guess()" ng-disabled="disable_questions()">
+        <button class="button" ng-click="submit_guess()" ng-disabled="!valid_guess || disable_questions()">
+          Submit ⏎
+        </button>
+        <span class="input-warning" ng-show="!valid_guess && cur_guess.length > 3">
+          Invalid Characters
+        </span>
+
+        <p>
+          <strong>Guesses ({{response.guesses.length}}):</strong>
+          <button class="remove-button" ng-show="response.guesses.length > 0"
+            ng-click="remove_guesses()"  ng-disabled="disable_questions()">
+            Clear All ⨂
+          </button>
+        </p>
+        <ul class="guesses">
+          <li ng-repeat="guess in response.guesses track by $index">
+            <span ng-bind-html="guess"></span>
+            <button class="remove-button" ng-click="remove_guess($index)" ng-disabled="disable_questions()">⨂</button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Post-Stimulus Feedback -->
+      <div ng-show="section == 'stimuli' && part_id < 0" class="captions">
+        The word being spelled was <strong>{{prev_stim().goal}}</strong>. <br>
+        <br>
+        You earned <strong>{{stim_reward.toFixed(2)}}</strong> bonus point(s) this round, for a total of <strong>{{total_reward.toFixed(2)}}</strong> points.<br>
+        <br>
+        <span ng-show="stim_reward > 0">At each step, you earned the following points:</span>
+        <ul class="points-breakdown" ng-show="stim_reward > 0">
+          <li ng-repeat="r in ratings track by $index">
+            <strong>Step {{$index + 1}}:</strong> {{r.reward.toFixed(2)}} point(s)&emsp;({{r.n_correct}} out of {{r.n_guesses}} correct)
+          </li>
+        </ul>
+        <span ng-show="stim_reward == 0">Unfortunately, none of your guesses were correct this round.</span>
+      </div>
+ 
+      <!-- Comprehension Questions -->
+      <div ng-show="section == 'instructions' && instruction_has_question()" class="comprehension_question" ng-cloak>
+        <p ng-bind-html="instructions[inst_id].question"></p>
+
+        <ul class="no-bullets" ng-cloak>
+          <li ng-repeat="opt in instructions[inst_id].options">
+            <input type="radio" name="comprehension" ng-model="comprehension_response" ng-click="validate_comprehension(opt)"
+              value="{{opt}}"> <span class="checkboxtext" ng-bind-html="opt"></span>
+          </li>
+        </ul>
+        <br>
+
+        <div ng-hide="comprehension_response == ''" class="checkboxtext">
+          <strong ng-show="valid_comprehension" style="color:green">Correct! Hit the Next button to continue.</strong>
+          <strong ng-show="!valid_comprehension" style="color:red">Wrong answer, please try again!</strong>
+        </div>
+
+        <p ng-bind-html="instructions[inst_id].footnote"></p>
+      </div>
+
+    </div>
+
+</body>
+
+</html>

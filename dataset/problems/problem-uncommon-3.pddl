@@ -1,0 +1,30 @@
+(define (problem block-words)
+	(:domain block-words)
+	(:objects
+		w a z r h d g l i u e - block
+	)
+	(:init
+		(handempty)
+		(clear e)
+		(ontable e)
+		(clear d)
+		(on d u)
+		(ontable u)
+		(clear g)
+		(on g l)
+		(ontable l)
+		(clear w)
+		(on w a)
+		(ontable a)
+		(clear z)
+		(on z r)
+		(ontable r)
+		(clear i)
+		(on i h)
+		(ontable h)		
+	)
+	(:goal (and
+		;; wizard
+		(clear w) (ontable d) (on w i) (on i z) (on z a) (on a r) (on r d)
+	))
+)
